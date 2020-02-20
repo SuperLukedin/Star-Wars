@@ -3,18 +3,19 @@
     <v-container>
     <div class="search">
       <v-text-field 
-        label="Search"
+        label="Search people here"
         v-model="search"
       >
       </v-text-field>
     </div>
-    <v-row>
+    <v-row>  
       <v-col cols=6>
+        <p class="display-1"> Star Wars People </p>
         <div v-if="search.length === 0">
           <div v-for="(item, i) in people" :key="i">
             <div class="tile">
               <v-btn
-                color="primary"
+                color="#1aaad6"
                 class="button"
                 @click="selectPeople(item)" 
                 min-width=300
@@ -39,25 +40,22 @@
               </v-btn>
             </div> 
           </div>
-        </div>
-          
+        </div>        
       </v-col>
-      <div v-if="selected" class="card">
-        <v-card
-          class="mx-auto"
-          max-width="344"
-        > 
-          <v-card-text>
-            <v-card-title>{{ selected.name }}</v-card-title>
-            <v-card-text>
-              <div class="text--primary">
-                {{ selected }}
-              </div>
+        <div v-if="selected" class="card">
+          <v-card
+            class="mx-auto"
+            max-width="500"
+          > 
+            <v-card-text class="card-text">
+              <p class="display-1"> {{ selectedName }} </p>
+                <div class="content">
+                  {{ selected }}
+                </div>
             </v-card-text>
-            
-          </v-card-text>
-        </v-card>
-      </div>
+          </v-card>
+        </div>
+
     </v-row>
   </v-container>
   </v-app>
@@ -72,12 +70,13 @@ export default {
   data() {
     return {
       selected: null,
+      selectedName: '',
       search: '',
       filteredPeople: []
     }
   },
   created () {
-    this.$http.get("https://swapi.co/api/starships/").then(response => {
+    this.$http.get("https://swapi.co/api/people/").then(response => {
       response
       this.$store.commit('setPeople', response.body.results)
     })
@@ -89,7 +88,8 @@ export default {
   },
   methods: {
     selectPeople (item) {
-      this.selected = item
+      this.selectedName = item.name
+      this.selected = JSON.stringify(item)
     }
   },
   watch: {
@@ -102,13 +102,12 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
   .tile {
     margin: 15px auto
   }
   .card {
-    margin: auto auto
+    margin: auto auto;
   }
   .v-content__wrap {
     background-color: antiquewhite
@@ -120,5 +119,14 @@ export default {
   }
   .v-application--wrap {
     background-color: aliceblue
+  }
+  .card-text {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    align-items: center;
+  }
+  .content {
+    width: 100%;
   }
 </style>
